@@ -1,19 +1,68 @@
 #timer
-  border: 3px solid red
+  border: 5px solid black
+  border-radius: 35px
   display: inline-block
   position: relative
+  top: 250px
   left: 50%
   transform: translateX(-50%)
 
-#settings
-
-  #break, #session
-    display: inline-block
-
 #time, #buttons, #settings
   margin: 25px
-  display: block
+  border: 1px solid black  
+  display: inline-block
 
+#settings
+  display: block
+  #break, #session
+    display: inline-block
+    border: 1px solid black
+    border-radius: 15px
+    text-align: center
+    vertical-align: middle
+    font-size: 3rem
+    padding: 10px
+    width: 350px
+
+  #session
+    #session-label
+      display: block
+      font-size: 2.5rem
+    div
+      padding: 5px
+      display: inline-block
+
+  #break
+    margin-right: 15px
+    #break-label
+      display: block
+      font-size: 2.5rem
+    div
+      padding: 5px
+      display: inline-block
+
+#button-time
+  position: relative
+  display: inline-block
+  left: 50%
+  transform: translateX(-50%)
+  #time, #buttons
+    width: 300px
+    text-align: center
+    vertical-align: middle
+
+#time
+  #timer-label
+    font-size: 4rem
+  #time-left
+    font-size: 5rem
+
+#buttons
   div
     display: inline-block
-    padding: 15px
+    font-size: 5rem
+    padding: 5px
+  #start, #stop
+    padding-right: 15px
+  #reset, #start, #stop
+    text-shadow: 8px 3px 3px purple

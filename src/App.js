@@ -77,7 +77,9 @@ class App extends Component {
   handleReset(e) {
     e.preventDefault()
     clearInterval(this.state.interval)
-    document.getElementById("beep").pause()
+    var sound = document.getElementById("beep")
+    sound.pause()
+    sound.currentTime = 0
     this.setState({
       currentInterval: "Session",
       breakLength: 5,
