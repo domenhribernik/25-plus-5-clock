@@ -15,13 +15,14 @@ body {
   border-radius: 35px;
   display: inline-block;
   position: relative;
+  padding: 30px;
   top: 250px;
   left: 50%;
   transform: translateX(-50%); }
 
 #time, #buttons, #settings {
   margin: 25px;
-  border: 1px solid black;
+  margin-bottom: 15px;
   display: inline-block; }
 
 #settings {
@@ -35,13 +36,16 @@ body {
     font-size: 3rem;
     padding: 10px;
     width: 350px; }
-  #settings #session #session-label {
-    display: block;
-    font-size: 2.5rem; }
-  #settings #session div {
-    padding: 5px;
-    display: inline-block; }
+  #settings #session {
+    text-shadow: 5px 3px 10px #ED88AF; }
+    #settings #session #session-label {
+      display: block;
+      font-size: 2.5rem; }
+    #settings #session div {
+      padding: 5px;
+      display: inline-block; }
   #settings #break {
+    text-shadow: 5px 3px 10px #C3F6D7;
     margin-right: 15px; }
     #settings #break #break-label {
       display: block;
@@ -53,25 +57,30 @@ body {
 #button-time {
   position: relative;
   display: inline-block;
+  border: 1px solid black;
+  border-radius: 15px;
+  margin-bottom: 20px;
   left: 50%;
   transform: translateX(-50%); }
   #button-time #time, #button-time #buttons {
-    width: 300px;
+    width: 330px;
     text-align: center;
     vertical-align: middle; }
 
-#time #timer-label {
-  font-size: 4rem; }
-#time #time-left {
-  font-size: 5rem; }
+#time {
+  text-shadow: 5px 3px 10px #ED88AF; }
+  #time #timer-label {
+    font-size: 4rem; }
+  #time #time-left {
+    font-size: 5rem; }
 
 #buttons div {
   display: inline-block;
-  font-size: 5rem;
+  font-size: 6rem;
   padding: 5px; }
 #buttons #start, #buttons #stop {
   padding-right: 15px; }
 #buttons #reset, #buttons #start, #buttons #stop {
-  text-shadow: 8px 3px 3px purple; }
+  text-shadow: 7px 5px 7px #9A9BE0; }
 
 /*# sourceMappingURL=app.css.map */
