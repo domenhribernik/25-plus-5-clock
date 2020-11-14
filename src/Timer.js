@@ -4,6 +4,7 @@ class Timer extends Component {
   render() {
     return (
       <div id="timer">
+        <h1 id="title">25 + 5 Clock</h1>
         <div id="settings">
           <div id="break">
             <div id="break-label">Break Length</div>
@@ -21,7 +22,7 @@ class Timer extends Component {
         <div id="button-time">
           <div id="time">
             <div id="timer-label">{this.props.currentInterval}</div>
-            <div id="time-left">{`${this.props.minutes}:${this.props.seconds}`}</div>
+            <div id="time-left">{this.props.display}</div>
           </div>
           <div id="buttons">
             <div id="start_stop" onClick={this.props.handleStartStop}>

@@ -1,5 +1,6 @@
 #timer
   border: 5px solid black
+  box-shadow: 5px 5px 10px black
   border-radius: 35px
   display: inline-block
   position: relative
@@ -8,25 +9,35 @@
   left: 50%
   transform: translateX(-50%)
 
+  #title
+    display: inline-block
+    margin: 0px
+    line-height: 80px
+    position: relative
+    top: -110px
+    left: 10px
+
 #time, #buttons, #settings
   margin: 25px
   margin-bottom: 15px
   display: inline-block
 
 #settings
+  margin-top: -60px
   display: block
   #break, #session
     display: inline-block
     border: 1px solid black
-    border-radius: 15px
+    border-radius: 25px
+    box-shadow: inset 5px 5px 10px black
     text-align: center
     vertical-align: middle
     font-size: 3rem
     padding: 10px
-    width: 350px
+    width: 300px
 
   #session
-    text-shadow: 5px 3px 10px #ED88AF
+    text-shadow: 2px 2px 5px #ED88AF
     #session-label
       display: block
       font-size: 2.5rem
@@ -35,7 +46,7 @@
       display: inline-block
 
   #break
-    text-shadow: 5px 3px 10px #C3F6D7
+    text-shadow: 3px 3px 5px #9A9BE0
     margin-right: 15px
     #break-label
       display: block
@@ -48,23 +59,28 @@
   position: relative
   display: inline-block
   border: 1px solid black
-  border-radius: 15px
+  box-shadow: inset 5px 5px 10px black
+  border-radius: 35px
   margin-bottom: 20px
   left: 50%
   transform: translateX(-50%)
   #time, #buttons
-    width: 330px
+    width: 220px
     text-align: center
     vertical-align: middle
 
 #time
-  text-shadow: 5px 3px 10px #ED88AF
+  text-shadow: 2px 2px 8px #ED88AF
+  padding-left: 30px
   #timer-label
     font-size: 4rem
   #time-left
     font-size: 5rem
 
 #buttons
+  padding-right: 30px
+  padding-left: 50px
+  border-left: 5px solid black
   div
     display: inline-block
     font-size: 6rem
@@ -72,4 +88,4 @@
   #start, #stop
     padding-right: 15px
   #reset, #start, #stop
-    text-shadow: 7px 5px 7px #9A9BE0
+    text-shadow: 7px 5px 5px #9A9BE0

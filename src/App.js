@@ -8,8 +8,8 @@ class App extends Component {
     this.state = {
       breakLength: 5,
       sessionLength: 25,
-      minutes: "25",
-      seconds: "00",
+      display: "25:00",
+      time: 1500,
       interval: 0,
       currentInterval: "Session",
       startStyle: {display: "inline-block"},
@@ -27,7 +27,8 @@ class App extends Component {
       if (this.state.currentInterval === "Break") {
         this.setState(prevState => ({
           breakLength: prevState.breakLength + 1,
-          minutes: parseInt(prevState.breakLength) + 1 < 10 ? "0" + (parseInt(prevState.breakLength) + 1).toString() : (parseInt(prevState.breakLength) + 1).toString()
+          time: prevState.time + 60,
+          display: this.clockify(prevState.time + 60)
         }))
       } else {
         this.setState(prevState => ({
@@ -38,7 +39,8 @@ class App extends Component {
       if (this.state.currentInterval === "Session") {
         this.setState(prevState => ({
           sessionLength: prevState.sessionLength + 1,
-          minutes: parseInt(prevState.sessionLength) + 1 < 10 ? "0" + (parseInt(prevState.sessionLength) + 1).toString() : (parseInt(prevState.sessionLength) + 1).toString()
+          time: prevState.time + 60,
+          display: this.clockify(prevState.time + 60)
         })) 
       } else {
         this.setState(prevState => ({
@@ -53,7 +55,8 @@ class App extends Component {
       if (this.state.currentInterval === "Break") {
         this.setState(prevState => ({
           breakLength: prevState.breakLength - 1,
-          minutes: prevState.breakLength - 1 < 10 ? "0" + (prevState.breakLength - 1) : prevState.breakLength - 1
+          time: prevState.time - 60,
+          display: this.clockify(prevState.time - 60)
         })) 
       } else {
         this.setState(prevState => ({
@@ -64,7 +67,8 @@ class App extends Component {
       if (this.state.currentInterval === "Session") {
         this.setState(prevState => ({
           sessionLength: prevState.sessionLength - 1,
-          minutes: prevState.sessionLength - 1 < 10 ? "0" + (prevState.sessionLength - 1) : prevState.sessionLength - 1
+          time: prevState.time - 60,
+          display: this.clockify(prevState.time - 60)
         })) 
       } else {
         this.setState(prevState => ({
@@ -84,8 +88,8 @@ class App extends Component {
       currentInterval: "Session",
       breakLength: 5,
       sessionLength: 25,
-      minutes: "25",
-      seconds: "00",
+      display: "25:00",
+      time: 1500,
       startStyle: {display: "inline-block"},
       stopStyle: {display: "none"}
     })
@@ -113,33 +117,41 @@ class App extends Component {
   }
 
   timer() {
-    if (this.state.seconds === "00" && this.state.minutes === "00") {
+    this.setState(prevState => ({
+      time: prevState.time - 1,
+    }))
+    if (this.state.time < 0) {
+      this.alarm(this.state.time)
+      if (this.state.currentInterval === "Session") {
+        this.switchTimer(this.state.breakLength * 60, "Break")        
+      } else if (this.state.currentInterval === "Break") {
+        this.switchTimer(this.state.sessionLength * 60, "Session")
+      }
+    }
+    this.setState({
+      display: this.clockify(this.state.time)
+    }) 
+  }
+
+  alarm(timer) {
+    if (timer < 0) {
       var sound = document.getElementById("beep")
       sound.currentTime = 0
       sound.play()
-      if (this.state.currentInterval === "Session") {
-        this.setState(prevState => ({
-          minutes: prevState.breakLength,
-          currentInterval: "Break"
-        }))
-        
-      } else if (this.state.currentInterval === "Break") {
-        this.setState(prevState => ({
-          minutes: prevState.sessionLength,
-          currentInterval: "Session"
-        }))
-      }
-    } else if (this.state.seconds === "00" && this.state.minutes > 0) {
-      this.setState(prevState => ({
-        seconds: "59",
-        minutes: prevState.minutes <= 10 ? "0" + (prevState.minutes - 1) : prevState.minutes - 1
-      }))
-    } else if (this.state.seconds > 0) {
-      this.setState(prevState => ({
-        seconds: prevState.seconds <= 10 ? "0" + (prevState.seconds - 1) : prevState.seconds - 1,
-        minutes: prevState.minutes.toString().length === 1 ? "0" + prevState.minutes : prevState.minutes
-      }))
     }
+  }
+  switchTimer(num, str) {
+    this.setState({
+      time: num,
+      currentInterval: str
+    });
+  }
+  clockify(time) {
+    let minutes = Math.floor(time / 60);
+    let seconds = time - minutes * 60;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return minutes + ':' + seconds;
   }
 
   render() {
@@ -148,8 +160,7 @@ class App extends Component {
         <Timer 
           breakLength={this.state.breakLength}
           sessionLength={this.state.sessionLength}
-          minutes={this.state.minutes}
-          seconds={this.state.seconds}   
+          display={this.state.display}
           currentInterval={this.state.currentInterval}     
           startStyle={this.state.startStyle}
           stopStyle={this.state.stopStyle}
