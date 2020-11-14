@@ -3,173 +3,143 @@ import Timer from "./Timer"
 import "./css/app.css"
 
 class App extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props);
     this.state = {
-      breakLength: 5,
-      sessionLength: 25,
-      display: "25:00",
-      time: 1500,
-      interval: 0,
-      currentInterval: "Session",
-      startStyle: {display: "inline-block"},
-      stopStyle: {display: "none"}
-    }
-    this.handleIncrement = this.handleIncrement.bind(this)
-    this.handleDecrement = this.handleDecrement.bind(this)
-    this.handleReset = this.handleReset.bind(this)
-    this.handleStartStop = this.handleStartStop.bind(this)
-    this.timer = this.timer.bind(this)
+      sessionLength: 1500,
+      breakLength: 300,
+      sessionStatus: 1500,
+      breakStatus: 300,
+      interval: "session",
+      stopped: true
+    };
+    this.handleModification = this.handleModification.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    this.handleStartStop = this.handleStartStop.bind(this);
+    this.setLength = this.setLength.bind(this);
   }
-  handleIncrement(e) {
-    e.preventDefault()
-    if (e.target.parentElement.id.includes("break") && this.state.breakLength < 60) {
-      if (this.state.currentInterval === "Break") {
-        this.setState(prevState => ({
-          breakLength: prevState.breakLength + 1,
-          time: prevState.time + 60,
-          display: this.clockify(prevState.time + 60)
-        }))
-      } else {
-        this.setState(prevState => ({
-          breakLength: prevState.breakLength + 1
-        }))
-      }
-    } else if (e.target.parentElement.id.includes("session") && this.state.sessionLength < 60) {
-      if (this.state.currentInterval === "Session") {
-        this.setState(prevState => ({
-          sessionLength: prevState.sessionLength + 1,
-          time: prevState.time + 60,
-          display: this.clockify(prevState.time + 60)
-        })) 
-      } else {
-        this.setState(prevState => ({
-          sessionLength: prevState.sessionLength + 1,
-        })) 
-      }
+  componentDidUpdate() {
+    if (!this.state.stopped) {
+      setTimeout(() => {
+        let length = this.state.interval + "Length"
+        let status = this.state.interval + "Status"
+        this.setState(function(prevState){
+          if (prevState[status] > 0) {
+            return {[status]: prevState[status] - 1}
+          } else {
+            document.getElementById("sound").play()
+            if (prevState.interval === "session") {
+              return {
+                [status]: prevState[length],
+                interval: "break"
+              }
+            } else {
+              return {
+                [status]: prevState[length],
+                interval: "session"
+              }
+            }
+          }
+        })
+      }, 1000);
     }
   }
-  handleDecrement(e) {
-    e.preventDefault()
-    if (e.target.parentElement.id.includes("break") && this.state.breakLength > 1) {
-      if (this.state.currentInterval === "Break") {
-        this.setState(prevState => ({
-          breakLength: prevState.breakLength - 1,
-          time: prevState.time - 60,
-          display: this.clockify(prevState.time - 60)
-        })) 
-      } else {
-        this.setState(prevState => ({
-          breakLength: prevState.breakLength - 1
-        }))
-      }
-    } else if (e.target.parentElement.id.includes("session") && this.state.sessionLength > 1) {
-      if (this.state.currentInterval === "Session") {
-        this.setState(prevState => ({
-          sessionLength: prevState.sessionLength - 1,
-          time: prevState.time - 60,
-          display: this.clockify(prevState.time - 60)
-        })) 
-      } else {
-        this.setState(prevState => ({
-          sessionLength: prevState.sessionLength - 1,
-        })) 
+
+  setLength(e, interval) {
+    let value = e.target.value
+    let length = interval + "Length"
+    let status = interval + "Status"
+    if (value === "") {
+      this.setState({
+        [length]: 0,
+        [status]: 0
+      })
+    } else {
+      value = parseInt(value, 10)
+      if (value >= 1 && value <= 60) {
+        this.setState({
+          [length]: value * 60,
+          [status]: value * 60
+        })
       }
     }
   }
 
-  handleReset(e) {
-    e.preventDefault()
-    clearInterval(this.state.interval)
-    var sound = document.getElementById("beep")
-    sound.pause()
-    sound.currentTime = 0
-    this.setState({
-      currentInterval: "Session",
-      breakLength: 5,
-      sessionLength: 25,
-      display: "25:00",
-      time: 1500,
-      startStyle: {display: "inline-block"},
-      stopStyle: {display: "none"}
-    })
+  timeArray(time) {
+    let minutes = Math.floor(time / 60)
+    let seconds = time % 60
+    let minutesString, secondsString
+    minutes < 10 ? minutesString = "0" + minutes.toString() : minutesString = minutes.toString()
+    seconds < 10 ? secondsString = "0" + seconds.toString() : secondsString = seconds.toString()
+    return [minutes, seconds, minutesString, secondsString]
   }
 
-  clearInterval() {
-    clearInterval(this.state.interval)
+  handleModification(interval, operator) {
+    if (this.state.stopped) {
+      let length = interval + "Length"
+      let status = interval + "Status"
+      if (operator = "plus") {
+        this.setState(function(prevState) {
+          if (prevState[length] + 60 <= 3600) {
+            return {
+              [lenght]: prevState[length] + 60,
+              [status]: prevState[length] + 60 
+            }
+          } else {
+            return prevState
+          }
+        })
+      } else {
+        this.setState(function(prevState) {
+          if (prevState[length] - 60 <= 60) {
+            return {
+              [lenght]: prevState[length] - 60,
+              [status]: prevState[length] - 60 
+            }
+          } else {
+            return prevState
+          }
+        })
+      }
+    }
+  }
+
+  handleReset() {
+    document.getElementById("sound").pause()
+    document.getElementById("sound").currentTime = 0
     this.setState({
-      interval: 0,
-      startStyle: {display: "inline-block"},
-      stopStyle: {display: "none"}
+      sessionLength: 1500,
+      breakLength: 300,
+      sessionStatus: 1500,
+      breakStatus: 300,
+      interval: "session",
+      stopped: true
     })
   }
 
   handleStartStop() {
-    if (this.state.interval === 0) {
-      this.setState({
-        interval: setInterval(this.timer, 1000),
-        stopStyle: {display: "inline-block"},
-        startStyle: {display: "none"}
-      })
-    } else {
-      this.clearInterval()
-    }
-  }
-
-  timer() {
-    this.setState(prevState => ({
-      time: prevState.time - 1,
+    this.setState((prevState) => ({
+      stopped: !prevState.stopped
     }))
-    if (this.state.time < 0) {
-      this.alarm(this.state.time)
-      if (this.state.currentInterval === "Session") {
-        this.switchTimer(this.state.breakLength * 60, "Break")        
-      } else if (this.state.currentInterval === "Break") {
-        this.switchTimer(this.state.sessionLength * 60, "Session")
-      }
-    }
-    this.setState({
-      display: this.clockify(this.state.time)
-    }) 
-  }
-
-  alarm(timer) {
-    if (timer < 0) {
-      var sound = document.getElementById("beep")
-      sound.currentTime = 0
-      sound.play()
-    }
-  }
-  switchTimer(num, str) {
-    this.setState({
-      time: num,
-      currentInterval: str
-    });
-  }
-  clockify(time) {
-    let minutes = Math.floor(time / 60);
-    let seconds = time - minutes * 60;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    return minutes + ':' + seconds;
   }
 
   render() {
     return (
       <div className="container">
         <Timer 
-          breakLength={this.state.breakLength}
-          sessionLength={this.state.sessionLength}
-          display={this.state.display}
-          currentInterval={this.state.currentInterval}     
-          startStyle={this.state.startStyle}
-          stopStyle={this.state.stopStyle}
-          handleIncrement={this.handleIncrement}    
-          handleDecrement={this.handleDecrement}        
+          setLength={this.setLength}
+          timeArray={this.timeArray}
+          handleModification={this.handleModification}    
           handleReset={this.handleReset}    
           handleStartStop={this.handleStartStop}
+          // startStyle={this.state.startStyle}
+          // stopStyle={this.state.stopStyle}
+          sessionLength={this.state.sessionLength}
+          sessionStatus={this.state.sessionStatus} 
+          breakLength={this.state.breakLength}
+          breakStatus={this.state.breakStatus} 
+          interval={this.state.interval} 
         />
-        <audio id="beep" src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav" preload="auto" />
       </div>
     )
   }
