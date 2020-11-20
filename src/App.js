@@ -10,34 +10,34 @@ class App extends Component {
       breakLength: 300,
       sessionStatus: 1500,
       breakStatus: 300,
-      sessionOrBreak: "session",
+      interval: "session",
       stopped: true
     };
     this.handleModification = this.handleModification.bind(this);
-    this.reset = this.reset.bind(this);
-    this.pauseplay = this.pauseplay.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    this.startStop = this.startStop.bind(this);
     this.setLength = this.setLength.bind(this);
   }
   componentDidUpdate() {
     if (!this.state.stopped) {
       setTimeout(() => {
         if (!this.state.stopped) {
-          let nameLength = this.state.sessionOrBreak + "Length";
-          let nameStatus = this.state.sessionOrBreak + "Status";
+          let length = this.state.interval + "Length";
+          let status = this.state.interval + "Status";
           this.setState(function (prevState) {
-            if (prevState[nameStatus] > 0) {
-              return { [nameStatus]: prevState[nameStatus] - 1 };
+            if (prevState[status] > 0) {
+              return { [status]: prevState[status] - 1 };
             } else {
               document.getElementById("beep").play();
-              if (prevState.sessionOrBreak === "session") {
+              if (prevState.interval === "session") {
                 return {
-                  [nameStatus]: prevState[nameLength],
-                  sessionOrBreak: "break"
+                  [status]: prevState[length],
+                  interval: "break"
                 };
               } else {
                 return {
-                  [nameStatus]: prevState[nameLength],
-                  sessionOrBreak: "session"
+                  [status]: prevState[length],
+                  interval: "session"
                 };
               }
             }
@@ -46,67 +46,67 @@ class App extends Component {
       }, 1000);
     }
   }
-  setLength(event, name) {
-    let value = event.target.value;
-    let nameLength = name + "Length";
-    let nameStatus = name + "Status";
+  setLength(e, name) {
+    let value = e.target.value;
+    let length = name + "Length";
+    let status = name + "Status";
     if (value === "") {
       this.setState({
-        [nameLength]: 0,
-        [nameStatus]: 0
+        [length]: 0,
+        [status]: 0
       });
     } else {
       let intValue = parseInt(value, 10);
       if (intValue >= 1 && intValue <= 60) {
         this.setState({
-          [nameLength]: intValue * 60,
-          [nameStatus]: intValue * 60
+          [length]: intValue * 60,
+          [status]: intValue * 60
         });
       }
     }
   }
-  detectScrollDir(event) {
+  detectScroll(e) {
     let direction = false;
-    if (event.deltaY < 0) direction = "plus";
-    else if (event.deltaY > 0) direction = "minus";
+    if (e.deltaY < 0) direction = "plus";
+    else if (e.deltaY > 0) direction = "minus";
     return direction;
   }
-  timeArray(timeInSeconds) {
-    let minutes = Math.floor(timeInSeconds / 60);
-    let seconds = timeInSeconds % 60;
-    let minutesString, secondsString;
-    if (minutes < 10) minutesString = "0" + minutes.toString();
-    else minutesString = minutes.toString();
-    if (seconds < 10) secondsString = "0" + seconds.toString();
-    else secondsString = seconds.toString();
-    return [minutes, seconds, minutesString, secondsString];
+  timeArray(time) {
+    let min = Math.floor(time / 60);
+    let sec = time % 60;
+    let minString, secString;
+    if (min < 10) minString = "0" + min.toString();
+    else minString = min.toString();
+    if (sec < 10) secString = "0" + sec.toString();
+    else secString = sec.toString();
+    return [min, sec, minString, secString];
   }
   handleModification(name, sign) {
     if (this.state.stopped) {
-      let nameLength = name + "Length";
-      let nameStatus = name + "Status";
+      let length = name + "Length";
+      let status = name + "Status";
       if (sign === "plus") {
         this.setState(function (prevState) {
-          if (prevState[nameLength] + 60 <= 3600)
+          if (prevState[length] + 60 <= 3600)
             return {
-              [nameLength]: prevState[nameLength] + 60,
-              [nameStatus]: prevState[nameLength] + 60
+              [length]: prevState[length] + 60,
+              [status]: prevState[length] + 60
             };
           else return prevState;
         });
       } else {
         this.setState(function (prevState) {
-          if (prevState[nameLength] - 60 >= 60)
+          if (prevState[length] - 60 >= 60)
             return {
-              [nameLength]: prevState[nameLength] - 60,
-              [nameStatus]: prevState[nameLength] - 60
+              [length]: prevState[length] - 60,
+              [status]: prevState[length] - 60
             };
           else return prevState;
         });
       }
     }
   }
-  reset() {
+  handleReset() {
     document.getElementById("beep").pause();
     document.getElementById("beep").currentTime = 0;
     this.setState({
@@ -114,11 +114,11 @@ class App extends Component {
       breakLength: 300,
       sessionStatus: 1500,
       breakStatus: 300,
-      sessionOrBreak: "session",
+      interval: "session",
       stopped: true
     });
   }
-  pauseplay() {
+  startStop() {
     this.setState((prevState) => ({
       stopped: !prevState.stopped
     }));
@@ -131,17 +131,17 @@ class App extends Component {
           setLength={this.setLength}
           timeArray={this.timeArray}
           handleModification={this.handleModification}    
-          pauseplay={this.pauseplay}
-          reset={this.reset}    
-          detectScrollDir={this.detectScrollDir}
-          stopped={this.stopped}
+          startStop={this.startStop}
+          handleReset={this.handleReset}    
+          detectScroll={this.detectScroll}
+          stopped={this.state.stopped}
           // startStyle={this.state.startStyle}
           // stopStyle={this.state.stopStyle}
           sessionLength={this.state.sessionLength}
           sessionStatus={this.state.sessionStatus} 
           breakLength={this.state.breakLength}
           breakStatus={this.state.breakStatus} 
-          sessionOrBreak={this.state.sessionOrBreak} 
+          interval={this.state.interval} 
         />
       </div>
     )
