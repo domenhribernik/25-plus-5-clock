@@ -10,117 +10,118 @@ class App extends Component {
       breakLength: 300,
       sessionStatus: 1500,
       breakStatus: 300,
-      interval: "session",
+      sessionOrBreak: "session",
       stopped: true
     };
     this.handleModification = this.handleModification.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handleStartStop = this.handleStartStop.bind(this);
+    this.reset = this.reset.bind(this);
+    this.pauseplay = this.pauseplay.bind(this);
     this.setLength = this.setLength.bind(this);
   }
   componentDidUpdate() {
     if (!this.state.stopped) {
       setTimeout(() => {
-        let length = this.state.interval + "Length"
-        let status = this.state.interval + "Status"
-        this.setState(function(prevState){
-          if (prevState[status] > 0) {
-            return {[status]: prevState[status] - 1}
-          } else {
-            document.getElementById("sound").play()
-            if (prevState.interval === "session") {
-              return {
-                [status]: prevState[length],
-                interval: "break"
-              }
+        if (!this.state.stopped) {
+          let nameLength = this.state.sessionOrBreak + "Length";
+          let nameStatus = this.state.sessionOrBreak + "Status";
+          this.setState(function (prevState) {
+            if (prevState[nameStatus] > 0) {
+              return { [nameStatus]: prevState[nameStatus] - 1 };
             } else {
-              return {
-                [status]: prevState[length],
-                interval: "session"
+              document.getElementById("beep").play();
+              if (prevState.sessionOrBreak === "session") {
+                return {
+                  [nameStatus]: prevState[nameLength],
+                  sessionOrBreak: "break"
+                };
+              } else {
+                return {
+                  [nameStatus]: prevState[nameLength],
+                  sessionOrBreak: "session"
+                };
               }
             }
-          }
-        })
+          });
+        }
       }, 1000);
     }
   }
-
-  setLength(e, interval) {
-    let value = e.target.value
-    let length = interval + "Length"
-    let status = interval + "Status"
+  setLength(event, name) {
+    let value = event.target.value;
+    let nameLength = name + "Length";
+    let nameStatus = name + "Status";
     if (value === "") {
       this.setState({
-        [length]: 0,
-        [status]: 0
-      })
+        [nameLength]: 0,
+        [nameStatus]: 0
+      });
     } else {
-      value = parseInt(value, 10)
-      if (value >= 1 && value <= 60) {
+      let intValue = parseInt(value, 10);
+      if (intValue >= 1 && intValue <= 60) {
         this.setState({
-          [length]: value * 60,
-          [status]: value * 60
-        })
+          [nameLength]: intValue * 60,
+          [nameStatus]: intValue * 60
+        });
       }
     }
   }
-
-  timeArray(time) {
-    let minutes = Math.floor(time / 60)
-    let seconds = time % 60
-    let minutesString, secondsString
-    minutes < 10 ? minutesString = "0" + minutes.toString() : minutesString = minutes.toString()
-    seconds < 10 ? secondsString = "0" + seconds.toString() : secondsString = seconds.toString()
-    return [minutes, seconds, minutesString, secondsString]
+  detectScrollDir(event) {
+    let direction = false;
+    if (event.deltaY < 0) direction = "plus";
+    else if (event.deltaY > 0) direction = "minus";
+    return direction;
   }
-
-  handleModification(interval, operator) {
+  timeArray(timeInSeconds) {
+    let minutes = Math.floor(timeInSeconds / 60);
+    let seconds = timeInSeconds % 60;
+    let minutesString, secondsString;
+    if (minutes < 10) minutesString = "0" + minutes.toString();
+    else minutesString = minutes.toString();
+    if (seconds < 10) secondsString = "0" + seconds.toString();
+    else secondsString = seconds.toString();
+    return [minutes, seconds, minutesString, secondsString];
+  }
+  handleModification(name, sign) {
     if (this.state.stopped) {
-      let length = interval + "Length"
-      let status = interval + "Status"
-      if (operator = "plus") {
-        this.setState(function(prevState) {
-          if (prevState[length] + 60 <= 3600) {
+      let nameLength = name + "Length";
+      let nameStatus = name + "Status";
+      if (sign === "plus") {
+        this.setState(function (prevState) {
+          if (prevState[nameLength] + 60 <= 3600)
             return {
-              [lenght]: prevState[length] + 60,
-              [status]: prevState[length] + 60 
-            }
-          } else {
-            return prevState
-          }
-        })
+              [nameLength]: prevState[nameLength] + 60,
+              [nameStatus]: prevState[nameLength] + 60
+            };
+          else return prevState;
+        });
       } else {
-        this.setState(function(prevState) {
-          if (prevState[length] - 60 <= 60) {
+        this.setState(function (prevState) {
+          if (prevState[nameLength] - 60 >= 60)
             return {
-              [lenght]: prevState[length] - 60,
-              [status]: prevState[length] - 60 
-            }
-          } else {
-            return prevState
-          }
-        })
+              [nameLength]: prevState[nameLength] - 60,
+              [nameStatus]: prevState[nameLength] - 60
+            };
+          else return prevState;
+        });
       }
     }
   }
-
-  handleReset() {
-    document.getElementById("sound").pause()
-    document.getElementById("sound").currentTime = 0
+  reset() {
+    document.getElementById("beep").pause();
+    document.getElementById("beep").currentTime = 0;
     this.setState({
       sessionLength: 1500,
       breakLength: 300,
       sessionStatus: 1500,
       breakStatus: 300,
-      interval: "session",
+      sessionOrBreak: "session",
       stopped: true
-    })
+    });
   }
-
-  handleStartStop() {
+  pauseplay() {
     this.setState((prevState) => ({
       stopped: !prevState.stopped
-    }))
+    }));
   }
 
   render() {
@@ -130,15 +131,17 @@ class App extends Component {
           setLength={this.setLength}
           timeArray={this.timeArray}
           handleModification={this.handleModification}    
-          handleReset={this.handleReset}    
-          handleStartStop={this.handleStartStop}
+          pauseplay={this.pauseplay}
+          reset={this.reset}    
+          detectScrollDir={this.detectScrollDir}
+          stopped={this.stopped}
           // startStyle={this.state.startStyle}
           // stopStyle={this.state.stopStyle}
           sessionLength={this.state.sessionLength}
           sessionStatus={this.state.sessionStatus} 
           breakLength={this.state.breakLength}
           breakStatus={this.state.breakStatus} 
-          interval={this.state.interval} 
+          sessionOrBreak={this.state.sessionOrBreak} 
         />
       </div>
     )

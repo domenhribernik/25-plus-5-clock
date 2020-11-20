@@ -129,7 +129,7 @@ class App extends React.Component {
           id="clock"
           className="jumbotron shadow-lg"
           style={
-            this.state.sessionOrBreak === "session"
+            this.props.sessionOrBreak === "session"
               ? { backgroundColor: "#2e2157" }
               : { backgroundColor: "#574221" }
           }
@@ -138,38 +138,38 @@ class App extends React.Component {
           <div
             id="display"
             className={
-              this.state.sessionOrBreak === "session"
+              this.props.sessionOrBreak === "session"
                 ? "alert alert-primary"
                 : "alert alert-warning"
             }
           >
-            <div id="reset" onClick={() => this.reset()}>
+            <div id="reset" onClick={() => this.props.reset()}>
               <i className="fa fa-undo"></i>
             </div>
             <div>
               <h3 id="timer-label">
-                {this.state.sessionOrBreak === "session"
+                {this.props.sessionOrBreak === "session"
                   ? "Session"
-                  : this.state.sessionOrBreak === "break"
+                  : this.props.sessionOrBreak === "break"
                   ? "Break"
                   : ""}
               </h3>
               <div id="time-left">
-                {this.state.sessionOrBreak === "session" ? (
+                {this.props.sessionOrBreak === "session" ? (
                   <span>
-                    {this.timeArray(this.state.sessionStatus)[2]}:
-                    {this.timeArray(this.state.sessionStatus)[3]}
+                    {this.props.timeArray(this.props.sessionStatus)[2]}:
+                    {this.props.timeArray(this.props.sessionStatus)[3]}
                   </span>
                 ) : (
                   <span>
-                    {this.timeArray(this.state.breakStatus)[2]}:
-                    {this.timeArray(this.state.breakStatus)[3]}
+                    {this.props.timeArray(this.props.breakStatus)[2]}:
+                    {this.props.timeArray(this.props.breakStatus)[3]}
                   </span>
                 )}
               </div>
             </div>
-            <div id="start_stop" onClick={() => this.pauseplay()}>
-              {this.state.stopped ? (
+            <div id="start_stop" onClick={() => this.props.pauseplay()}>
+              {this.props.stopped ? (
                 <i className="fa fa-play"></i>
               ) : (
                 <i className="fa fa-pause"></i>
@@ -178,43 +178,43 @@ class App extends React.Component {
           </div>
           <div
             id="setup"
-            style={this.state.stopped ? { color: "#EEE" } : { color: "#999" }}
+            style={this.props.stopped ? { color: "#EEE" } : { color: "#999" }}
           >
             <div
               className="m-3"
               id="session-setup"
               onWheel={(event) =>
-                this.modify("session", this.detectScrollDir(event))
+                this.props.modify("session", this.props.detectScrollDir(event))
               }
             >
               <div id="session-label">Session Length</div>
               <div
                 className="setupModifier"
                 id="session-increment"
-                onClick={() => this.modify("session", "plus")}
+                onClick={() => this.props.modify("session", "plus")}
               >
                 <i className="fa fa-arrow-up"></i>
               </div>
               <div>
                 <input
                   className={
-                    !this.state.stopped
+                    !this.props.stopped
                       ? "lengthInput alert alert-dark"
-                      : this.state.sessionOrBreak === "session"
+                      : this.props.sessionOrBreak === "session"
                       ? "lengthInput alert alert-primary"
                       : "lengthInput alert alert-warning"
                   }
                   id="session-length"
                   type="text"
-                  value={this.timeArray(this.state.sessionLength)[0]}
-                  onChange={(event) => this.setLength(event, "session")}
-                  disabled={!this.state.stopped ? true : false}
+                  value={this.props.timeArray(this.props.sessionLength)[0]}
+                  onChange={(event) => this.props.setLength(event, "session")}
+                  disabled={!this.props.stopped ? true : false}
                 ></input>
               </div>
               <div
                 className="setupModifier"
                 id="session-decrement"
-                onClick={() => this.modify("session", "minus")}
+                onClick={() => this.props.modify("session", "minus")}
               >
                 <i className="fa fa-arrow-down"></i>
               </div>
@@ -223,35 +223,35 @@ class App extends React.Component {
               className="m-3"
               id="break-setup"
               onWheel={(event) =>
-                this.modify("break", this.detectScrollDir(event))
+                this.props.modify("break", this.props.detectScrollDir(event))
               }
             >
               <div id="break-label">Break Length</div>
               <div
                 className="setupModifier"
                 id="break-increment"
-                onClick={() => this.modify("break", "plus")}
+                onClick={() => this.props.modify("break", "plus")}
               >
                 <i className="fa fa-arrow-up"></i>
               </div>
               <input
                 className={
-                  !this.state.stopped
+                  !this.props.stopped
                     ? "lengthInput alert alert-dark"
-                    : this.state.sessionOrBreak === "session"
+                    : this.props.sessionOrBreak === "session"
                     ? "lengthInput alert alert-primary"
                     : "lengthInput alert alert-warning"
                 }
                 id="break-length"
                 type="text"
-                value={this.timeArray(this.state.breakLength)[0]}
-                onChange={(event) => this.setLength(event, "break")}
-                disabled={!this.state.stopped ? true : false}
+                value={this.props.timeArray(this.props.breakLength)[0]}
+                onChange={(event) => this.props.setLength(event, "break")}
+                disabled={!this.props.stopped ? true : false}
               ></input>
               <div
                 className="setupModifier"
                 id="break-decrement"
-                onClick={() => this.modify("break", "minus")}
+                onClick={() => this.props.modify("break", "minus")}
               >
                 <i className="fa fa-arrow-down"></i>
               </div>
